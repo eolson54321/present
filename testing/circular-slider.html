@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Circular Slider</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .slider-container {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            cursor: pointer;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        .track-bg {
+            fill: none;
+            stroke: #334155;
+            stroke-width: 12;
+        }
+
+        .track-progress {
+            fill: none;
+            stroke: #38bdf8;
+            stroke-width: 12;
+            stroke-linecap: round;
+            transition: stroke-dasharray 0.05s linear;
+        }
+
+        .thumb {
+            fill: #ffffff;
+            stroke: #0284c7;
+            stroke-width: 4;
+            cursor: pointer;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+            transition: transform 0.1s ease;
+        }
+
+        .value-display {
+            position: absolute;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #38bdf8;
+            pointer-events: none;
+        }
+
+        .track-progress {
+            transform: rotate(-90deg);
+            transform-origin: 100px 100px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Circular Range Slider</h2>
+    
+    <div class="slider-container" id="sliderContainer">
+        <div class="value-display" id="valueDisplay">0%</div>
+        <svg viewBox="0 0 200 200">
+            <!-- Background Track -->
+            <circle class="track-bg" cx="100" cy="100" r="80" />
+            <!-- Progress Track -->
+            <circle class="track-progress" id="trackProgress" cx="100" cy="100" r="80" />
+            <!-- Slider Thumb -->
+            <circle class="thumb" id="thumb" cx="100" cy="20" r="10" />
+        </svg>
+    </div>
+
+    <script>
+        const container = document.getElementById('sliderContainer');
+        const thumb = document.getElementById('thumb');
+        const progress = document.getElementById('trackProgress');
+        const valueDisplay = document.getElementById('valueDisplay');
+
+        const radius = 80;
+        const centerX = 100;
+        const centerY = 100;
+        const circumference = 2 * Math.PI * radius;
+
+        // Initialize progress stroke
+        progress.style.strokeDasharray = `${circumference} ${circumference}`;
+
+
+
+        function updateSlider(clientX, clientY) {
+            const rect = container.getBoundingClientRect();
+            // Get mouse position relative to the center of the SVG
+            const x = clientX - rect.left - rect.width / 2;
+            const y = clientY - rect.top - rect.height / 2;
+
+            // Calculate angle using atan2 (-PI to PI)
+            let angle = Math.atan2(y, x);
+            
+            // Shift angle so 0 starts at the top (12 o'clock) instead of the right (3 o'clock)
+            angle += Math.PI / 2;
+            if (angle < 0) {
+                angle += 2 * Math.PI;
+            }
+
+            // Convert angle to a 0 to 1 percentage
+            const percentage = angle / (2 * Math.PI);
+            
+            // Calculate arc length for stroke-dashoffset
+            const dashOffset = circumference * (1 - percentage);
+            progress.style.strokeDashoffset = dashOffset;
+
+            // Find exact coordinates on the circle circumference for the thumb
+            // Subtracting Math.PI/2 to align with our top-starting angle
+            const thumbX = centerX + radius * Math.cos(angle - Math.PI / 2);
+            const thumbY = centerY + radius * Math.sin(angle - Math.PI / 2);
+
+            thumb.setAttribute('cx', thumbX);
+            thumb.setAttribute('cy', thumbY);
+
+            // Update UI Text Value (0 to 100)
+            const value = Math.round(percentage * 100);
+            valueDisplay.textContent = `${value}%`;
+        }
+
+        // Event Listeners for Mouse and Touch Dragging
+        container.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            updateSlider(e.clientX, e.clientY);
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            updateSlider(e.clientX, e.clientY);
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        // Touch support for mobile devices
+        container.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            updateSlider(e.touches[0].clientX, e.touches[0].clientY);
+            e.preventDefault();
+        });
+
+        window.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            updateSlider(e.touches[0].clientX, e.touches[0].clientY);
+        });
+
+        window.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+    </script>
+</body>
+</html>

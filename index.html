@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<header>
+    <link rel="stylesheet" href="styles.css">
+    <script src="./static/home.js" type="module"></script>
+    <script src="./static/dob_selector.js" type="module"></script>
+</header>
+<body>
+    <form class="card" id="form">
+        <h1>Enter Info</h1>
+        <span>
+            <label for="name">Name:</label>
+            <select id="firstName" required><option value="" disabled selected hidden>first name...</option></select>
+            <select id="lastName" required><option value="" disabled selected hidden>last name...</option></select>
+        </span>
+        <span class="dob-span">
+            <label for="dobButton">Date of Birth:</label>
+            <input type="text" id="dobInput" class="dob-input" name="dob" placeholder="mm/dd/yyyy" required readonly />
+        </span>
+        <div id="dobContainer" class="dob-container">
+            <div id="sliderContainer" class="slider-container">
+                <svg id="slider-svg" width="300" height="200" viewBox="0 0 300 200">
+                    <defs>
+                        <radialGradient id="sun-gradient">
+                            <stop offset="10%" stop-color="gold" />
+                            <stop offset="100%" stop-color="tomato" />
+                        </radialGradient>
+                        <linearGradient id="earth-gradient" x1="100%" y1="0%" x2="0%" y2="0%" gradientUnits="objectBoundingBox">
+                            <stop offset="0%" stop-color="white" stop-opacity="0.1" />
+                            <stop offset="30%" stop-color="lightgray" stop-opacity="0.4" />
+                            <stop offset="65%" stop-color="black" stop-opacity="0.6" />
+                        </linearGradient>
+
+                        <!-- DITHERING -->
+                         <filter id="grain-filter" x="0%" y="0%" width="100%" height="100%">
+                            <!-- Generate fractal noise -->
+                            <feTurbulence
+                                type="fractalNoise"
+                                baseFrequency="0.8"
+                                result="noise" />
+                            
+                            <!-- Convert to monochrome -->
+                             <feColorMatrix
+                                type="saturate"
+                                values="0"
+                                in="noise"
+                                result="mono-noise" />
+
+                            <!-- Intensity controls -->
+                             <feComponentTransfer in="mono-noise" result="crisp-noise">
+                                <!-- slope="3", intercept="-1" pushes grays to pure black & white -->
+                                <feFuncR type="linear" slope="3" intercept="-1" />
+                                <feFuncG type="linear" slope="3" intercept="-1" />
+                                <feFuncB type="linear" slope="3" intercept="-1" />
+                                <!-- Opacity controls -->
+                                <feFuncA type="linear" slope="0.3" />
+                             </feComponentTransfer>
+                            
+                             <!-- Blend noise over original gradient -->
+                            <feBlend mode="overlay" in="crisp-noise" in2="SourceGraphic" />
+                             
+                            <!-- Trim noise -->
+                            <feComposite operator="in" in="blended" in2="SourceAlpha" />
+                        </filter>
+
+                        <!-- CLOUD AND LIGHTING FILTER -->
+                        <filter id="cloud-filter" x="0%" y="0%" width="100%" height="100%">
+                            <!-- Generate fractal noise -->
+                            <feTurbulence
+                                type="turbulence"
+                                baseFrequency="0.1"
+                                result="noise" />
+                            
+                            <!-- Convert to monochrome -->
+                             <feColorMatrix
+                                type="saturate"
+                                values="0"
+                                in="noise"
+                                result="mono-noise" />
+
+                            <!-- Intensity controls -->
+                             <feComponentTransfer in="mono-noise" result="crisp-noise">
+                                <feFuncR type="linear" slope="2" intercept="0" />
+                                <feFuncG type="linear" slope="2" intercept="0" />
+                                <feFuncB type="linear" slope="2" intercept="0" />
+                                <!-- Opacity controls -->
+                                <feFuncA type="linear" slope="1" />
+                             </feComponentTransfer>
+                            
+                             <!-- Blend noise over original gradient -->
+                            <feBlend mode="screen" in="crisp-noise" in2="lighting-gradient" />
+                            <feBlend mode="screen" in="crisp-noise" in2="SourceGraphic" />
+                             
+                            <!-- Trim noise -->
+                            <feComposite operator="in" in="blended" in2="SourceAlpha" />
+                        </filter>
+                        
+                        <clipPath id="earth-clip">
+                            <circle cx="15" cy="15" r="14" />
+                        </clipPath>
+                    </defs>
+
+                    <circle id="img_sun" cx="150" cy="100" r="35" fill="url(#sun-gradient)" filter="url(#grain-filter)" />
+                    <ellipse id="track" class="track-background" cx="150" cy="100" rx="120" ry="50"/>
+                    <g id="thumb" clip-path="url(#earth-clip)" transform="translate(15, 85)">
+                        <image href="static/earth.svg" width="30" height="30" filter="url(#cloud-filter)" />
+                        <rect width="30" height="30" fill="url(#earth-gradient)"></rect>
+                    </g>
+                </svg>
+            </div>
+        </div>
+        <button type="submit" id="submit">submit</button>
+    </form>
+    <div id="modalOverlay" class="modal-overlay">
+        <div class="modal-content">
+            <span id="closeButton" class="close-button">&times;</span>
+            <h2>2 Factor Authentication</h2>
+            <p>Factor (x² + 5x + 6)</p>
+            <input id="2fa" />
+            <button id="actionButton" class="action-button">Submit</button>
+        </div>
+    </div>
+</body>

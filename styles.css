@@ -1,0 +1,527 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+:root {
+    --bg-page: #eef2f6;
+    --card-bg: #ffffff;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --border-subtle: #cbd5e1;
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --space-bg: #070b14;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    background-color: var(--bg-page);
+    background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+    background-size: 20px 20px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Main Card Container */
+.card {
+    background-color: var(--card-bg);
+    width: 100%;
+    max-width: 440px;
+    padding: 36px 32px;
+    border-radius: 16px;
+    border: 1px solid rgba(203, 213, 225, 0.8);
+    box-shadow: 
+        0 20px 25px -5px rgba(15, 23, 42, 0.08),
+        0 8px 10px -6px rgba(15, 23, 42, 0.04);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    user-select: none;
+}
+
+.card h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--text-main);
+    text-align: center;
+    margin-bottom: 4px;
+}
+
+/* Form Row Layouts (targeting your existing <span> wrappers) */
+.card > span,
+.dob-span {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.card label {
+    width: 100%;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+}
+
+/* Dropdowns & Date Trigger Button */
+.card select,
+.dob-button {
+    height: 40px;
+    padding: 0 12px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    color: var(--text-main);
+    background-color: #f8fafc;
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    transition: all 0.15s ease;
+    cursor: pointer;
+}
+
+/* Split First & Last Name cleanly side-by-side */
+.card select {
+    flex: 1;
+    min-width: 140px;
+}
+
+.dob-button {
+    width: 100%;
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+}
+
+/* Subtle calendar/orbit hint icon on the button */
+.dob-button::after {
+    content: "\1F4C5";
+    font-size: 1rem;
+    opacity: 0.75;
+}
+
+.card select:hover,
+.dob-button:hover {
+    border-color: #94a3b8;
+    background-color: #ffffff;
+}
+
+.card select:focus,
+.dob-button:focus {
+    outline: none;
+    border-color: var(--accent);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* Orbital Date Picker Container */
+.dob-container {
+    visibility: hidden; /* Preserved for your JS toggle */
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    background: radial-gradient(circle at center, #131c31 0%, var(--space-bg) 100%);
+    border-radius: 12px;
+    padding: 12px;
+    border: 1px solid #1e293b;
+    box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.6);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Subtle "Instruction" watermark inside the cosmos */
+.dob-container::before {
+    content: "ORBIT EARTH TO SET DATE";
+    position: absolute;
+    bottom: 8px;
+    right: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    color: rgba(148, 163, 184, 0.45);
+    pointer-events: none;
+}
+
+.slider-container {
+    display: inline-flex;
+    line-height: 0;
+}
+
+.slider-container svg {
+    display: block;
+    overflow: visible;
+}
+
+/* Orbital Path & Celestial Bodies */
+.track-background {
+    fill: none;
+    stroke: rgba(148, 163, 184, 0.35);
+    stroke-width: 1.25px;
+    stroke-dasharray: 3 3; /* Turns the track into a proper astronomical trajectory */
+}
+
+#img_sun {
+    filter: url(#grain-filter) drop-shadow(0 0 14px rgba(251, 146, 60, 0.65));
+}
+
+#thumb {
+    cursor: grab;
+    transition: filter 0.15s ease;
+}
+
+#thumb:hover {
+    filter: drop-shadow(0 0 6px rgba(96, 165, 250, 0.9));
+}
+
+#thumb:active {
+    cursor: grabbing;
+}
+
+/* Submit Button */
+.card > button:last-of-type {
+    margin-top: 4px;
+    height: 44px;
+    width: 100%;
+    background-color: var(--accent);
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.card > button:last-of-type:hover {
+    background-color: var(--accent-hover);
+}
+
+.card > button:last-of-type:active {
+    transform: scale(0.99);
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.dob-input {
+    width: 100%;
+    height: 40px;
+    padding: 0 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--text-main);
+    background-color: #f8fafc;
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    cursor: pointer; /* Tells the user to click/interact to trigger the slider */
+    caret-color: transparent; /* Hides the typing cursor since they can't type */
+    transition: all 0.15s ease;
+}
+
+.dob-input:hover {
+    border-color: #94a3b8;
+    background-color: #ffffff;
+}
+
+.dob-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* Optional: Add a calendar/planet icon inside or right-aligned */
+.dob-input::placeholder {
+    color: #94a3b8;
+}
+
+/* MODAL */
+
+/* Modal Backdrop Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+/* Active state for when you show your modal via JS */
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Modal Content Box */
+.modal-content {
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 380px;
+    padding: 32px 28px 28px 28px;
+    border-radius: 16px;
+    border: 1px solid rgba(203, 213, 225, 0.8);
+    box-shadow: 
+        0 20px 25px -5px rgba(15, 23, 42, 0.1),
+        0 8px 10px -6px rgba(15, 23, 42, 0.04);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+    transform: translateY(10px);
+    transition: transform 0.2s ease;
+}
+
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
+}
+
+/* Close "X" Button */
+.close-button {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: #94a3b8;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.15s ease;
+}
+
+.close-button:hover {
+    color: var(--text-main);
+}
+
+/* Typography */
+.modal-content h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--text-main);
+}
+
+.modal-content p {
+    font-size: 0.9rem;
+    color: #475569;
+    line-height: 1.4;
+}
+
+/* Highlighting the math joke inside code formatting style */
+.modal-content p code, 
+.modal-content p strong {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    background-color: #f1f5f9;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #0f172a;
+}
+
+/* Input Field styling to match your login card */
+.modal-content input {
+    height: 40px;
+    padding: 0 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--text-main);
+    background-color: #f8fafc;
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    transition: all 0.15s ease;
+}
+
+.modal-content input:hover {
+    border-color: #94a3b8;
+    background-color: #ffffff;
+}
+
+.modal-content input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* Action / Submit Button */
+.action-button {
+    height: 40px;
+    width: 100%;
+    background-color: var(--accent);
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+    margin-top: 4px;
+}
+
+.action-button:hover {
+    background-color: var(--accent-hover);
+}
+
+.action-button:active {
+    transform: scale(0.99);
+}
+
+.modal-content input.error {
+    border-color: #ef4444;
+    background-color: #fef2f2;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+/* PRIZE */
+
+.present-image {
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+.present-image:active {
+    animation: shake 0.2s ease-in-out;
+}
+
+@keyframes shake {
+  0% { transform: translate(1px, 1px) rotate(0deg); }
+  25% { transform: translate(-3px, 0px) rotate(1deg); }
+  50% { transform: translate(1px, -1px) rotate(1deg); }
+  75% { transform: translate(-3px, 1px) rotate(0deg); }
+  100% { transform: translate(1px, -2px) rotate(-1deg); }
+}
+
+#canvas {
+    position: relative;
+    background-image: url("static/present-1.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    overflow: hidden;
+    z-index: 2;
+}
+
+.canvas-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+
+    display: grid;
+    place-items: center;
+}
+
+/* Make sure the canvas and the pseudo-element occupy the exact same grid cell */
+#canvas,
+.canvas-container::before {
+    grid-area: 1 / 1 / -1 / -1;
+}
+
+.canvas-container::before {
+    content: '';
+
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    
+    z-index: 1;
+    
+    /* Conic gradient for the rays */
+    background: conic-gradient(
+        from 0deg,
+        rgba(255, 255, 220, 0.94) 0deg,
+        rgba(255, 255, 220, 0.94) 30deg,
+        transparent 30deg,
+        transparent 60deg,
+        rgba(255, 255, 220, 0.94) 60deg,
+        rgba(255, 255, 220, 0.94) 90deg,
+        transparent 90deg,
+        transparent 120deg,
+        rgba(255, 255, 220, 0.94) 120deg,
+        rgba(255, 255, 220, 0.94) 150deg,
+        transparent 150deg,
+        transparent 180deg,
+        rgba(255, 255, 220, 0.94) 180deg,
+        rgba(255, 255, 220, 0.94) 210deg,
+        transparent 210deg,
+        transparent 240deg,
+        rgba(255, 255, 220, 0.94) 240deg,
+        rgba(255, 255, 220, 0.94) 270deg,
+        transparent 270deg,
+        transparent 300deg,
+        rgba(255, 255, 220, 0.94) 300deg,
+        rgba(255, 255, 220, 0.94) 330deg,
+        transparent 330deg,
+        transparent 360deg
+    );
+    
+    mask-image: radial-gradient(circle, black 40%, transparent 75%);
+    -webkit-mask-image: radial-gradient(circle, black 40%, transparent 75%);
+    
+    animation: 
+        rotateRays 10s linear infinite,
+        scaleRays 1s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes rotateRays {
+    from {
+        rotate: 0deg;
+    }
+    to {
+        rotate: 360deg;
+    }
+}
+
+@keyframes scaleRays {
+    0% {
+        scale: 0.7;
+    }
+    50% {
+        scale: 1.2;
+    }
+    100% {
+        scale: 0.7;
+    }
+}
