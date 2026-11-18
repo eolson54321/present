@@ -38,6 +38,11 @@ body {
     padding: 20px;
 }
 
+body.prize-body,
+body:has(.canvas-container) {
+    padding: 0;
+}
+
 /* Main Card Container */
 .card {
     background-color: var(--card-bg);
@@ -440,10 +445,11 @@ body {
 
 .canvas-container {
     position: relative;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
     display: grid;
+    place-content: center;
     place-items: center;
 }
 
@@ -456,8 +462,8 @@ body {
 .canvas-container::before {
     content: '';
 
-    width: 500px;
-    height: 500px;
+    width: min(500px, 100vw);
+    height: min(500px, 100vw);
     border-radius: 50%;
     
     z-index: 1;
