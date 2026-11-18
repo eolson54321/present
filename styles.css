@@ -434,7 +434,8 @@ body {
 }
 
 #canvas {
-    position: relative;
+    width: 400px;
+    height: 400px;
     background-image: url("static/present-1.png");
     background-repeat: no-repeat;
     background-position: center;
@@ -447,7 +448,6 @@ body {
     width: 100vw;
     height: 100vh;
     overflow: hidden;
-
     display: grid;
     place-items: center;
 }
