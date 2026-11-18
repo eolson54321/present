@@ -416,15 +416,6 @@ body {
 
 /* PRIZE */
 
-.present-image {
-    user-select: none;
-    -webkit-user-drag: none;
-}
-
-.present-image:active {
-    animation: shake 0.2s ease-in-out;
-}
-
 @keyframes shake {
   0% { transform: translate(1px, 1px) rotate(0deg); }
   25% { transform: translate(-3px, 0px) rotate(1deg); }
@@ -434,13 +425,17 @@ body {
 }
 
 #canvas {
-    width: 400px;
-    height: 400px;
+    width: min(400px, 90vw);
+    height: min(400px, 90vw);
     background-image: url("static/present-1.png");
     background-repeat: no-repeat;
     background-position: center;
     overflow: hidden;
     z-index: 2;
+}
+
+#canvas:active {
+    animation: shake 0.2s ease-in-out;
 }
 
 .canvas-container {
