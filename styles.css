@@ -429,6 +429,7 @@ body:has(.canvas-container) {
   100% { transform: translate(1px, -2px) rotate(-1deg); }
 }
 
+#present,
 #canvas {
     width: min(400px, 90vw);
     height: min(400px, 90vw);
@@ -437,10 +438,21 @@ body:has(.canvas-container) {
     background-position: center;
     overflow: hidden;
     z-index: 2;
+    cursor: pointer;
 }
 
+#present:active,
 #canvas:active {
     animation: shake 0.2s ease-in-out;
+}
+
+#confetti-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
 }
 
 .canvas-container {
@@ -453,7 +465,8 @@ body:has(.canvas-container) {
     place-items: center;
 }
 
-/* Make sure the canvas and the pseudo-element occupy the exact same grid cell */
+/* Make sure the present and the pseudo-element occupy the exact same grid cell */
+#present,
 #canvas,
 .canvas-container::before {
     grid-area: 1 / 1 / -1 / -1;

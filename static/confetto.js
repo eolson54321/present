@@ -1,7 +1,7 @@
 let particles = [];
 const colors = ['#f43f5e', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
 
-const canvas = document.getElementById('canvas');
+const canvas = document.getElementById('confetti-canvas') || document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
 // Resize canvas to full screen with high DPI support
