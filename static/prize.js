@@ -1,6 +1,6 @@
 import { spawnParticles } from "./confetto.js";
 
-const MAX_HEALTH = 40;
+const MAX_HEALTH = 400;
 const PHASES = 4;
 const CONFETTI_MIN = 10;
 const CONFETTI_MAX = 50;
