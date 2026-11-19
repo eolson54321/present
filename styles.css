@@ -439,8 +439,13 @@ body:has(.canvas-container) {
     overflow: hidden;
     z-index: 2;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
+#present.shake,
+#canvas.shake,
 #present:active,
 #canvas:active {
     animation: shake 0.2s ease-in-out;

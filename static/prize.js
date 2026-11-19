@@ -12,6 +12,9 @@ function init() {
     const present = document.getElementById("present") || document.getElementById("canvas");
     if (present) {
         present.addEventListener("click", presentClickHandler);
+        present.addEventListener("animationend", () => {
+            present.classList.remove("shake");
+        });
     }
 }
 
@@ -23,6 +26,10 @@ if (document.readyState === "loading") {
 
 function presentClickHandler(event) {
     const present = document.getElementById("present") || document.getElementById("canvas");
+
+    present.classList.remove("shake");
+    void present.offsetWidth; // Force reflow to trigger animation on quick taps
+    present.classList.add("shake");
 
     if (health >= 0) health--;
     if (health % (Math.round(MAX_HEALTH / PHASES)) === 0) {
